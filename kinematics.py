@@ -217,7 +217,7 @@ LEG_FK = [fr_leg_fk, fl_leg_fk, br_leg_fk, bl_leg_fk]
 
 
 def inverse_kinematics(leg_fk, target_ee, initial_guess=(0, 0, 0),
-                       learning_rate=5, max_iterations=100, tolerance=0.001):
+                       learning_rate=5, max_iterations=1000, tolerance=0.001):
     """Joint angles that put leg_fk's foot at target_ee, found by gradient descent.
 
     leg_fk is one of the FK functions above, so the same solver works for every leg.

@@ -75,11 +75,11 @@ class InverseKinematics(Node):
         ################################################################################################
         t_mod = t % 3
         if( t_mod < 1):
-            return (self.ee_triangle_positions[1]) * t_mod  + self.ee_triangle_positions[0]* (1-t_mod)
+            return (self.ee_triangle_positions[1] - self.ee_triangle_positions[0]) * t_mod  + self.ee_triangle_positions[0]        
         elif (t_mod  < 2):
-            return (self.ee_triangle_positions[2]) * (t_mod-1)  + self.ee_triangle_positions[1]*(2-t_mod)
+            return (self.ee_triangle_positions[2] - self.ee_triangle_positions[1]) * (t_mod-1)  + self.ee_triangle_positions[1]
         else:
-            return (self.ee_triangle_positions[0]) * (t_mod-2)  + self.ee_triangle_positions[2]*(3-t_mod)
+            return (self.ee_triangle_positions[0] - self.ee_triangle_positions[2]) * (t_mod-2)  + self.ee_triangle_positions[2]
 
     def ik_timer_callback(self):
         if self.joint_positions is not None:
@@ -92,7 +92,8 @@ class InverseKinematics(Node):
             # TODO 6: Implement the time update
             ################################################################################################
 
-            t = t + 
+            self.t = self.t + self.ik_timer_period
+            
 
             
 
