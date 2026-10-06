@@ -217,7 +217,7 @@ LEG_FK = [fr_leg_fk, fl_leg_fk, br_leg_fk, bl_leg_fk]
 
 
 def inverse_kinematics(leg_fk, target_ee, initial_guess=(0, 0, 0),
-                       learning_rate=5, max_iterations=1000, tolerance=0.001):
+                       learning_rate=5, max_iterations=1000, tolerance=0.0001):
     """Joint angles that put leg_fk's foot at target_ee, found by gradient descent.
 
     leg_fk is one of the FK functions above, so the same solver works for every leg.
@@ -264,7 +264,7 @@ def inverse_kinematics(leg_fk, target_ee, initial_guess=(0, 0, 0),
         ################################################################################################
 
         theta = theta - learning_rate * grad
-        if(cost_function(theta)[1].mean()<tolerance):
+        if(cost_function(theta)[0]<tolerance):
             break
 
     # print(f'Cost: {cost_l}') # Use to debug to see if your cost function converges within max_iterations
