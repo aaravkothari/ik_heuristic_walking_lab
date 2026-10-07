@@ -72,6 +72,12 @@ class InverseKinematics(Node):
             ################################################################################################
             # TODO 7: Implement the trotting gait
             ################################################################################################
+            stand_position_2,    
+            stand_position_3,
+            liftoff_position,
+            mid_swing_position,
+            touch_down_position,  
+            stand_position_1
         ]) + rf_ee_offset
 
         lf_ee_offset = np.array([0.06, 0.09, 0])
@@ -79,6 +85,13 @@ class InverseKinematics(Node):
             ################################################################################################
             # TODO 7: Implement the trotting gait
             ################################################################################################
+            mid_swing_position,
+            touch_down_position,  
+            stand_position_1,
+            stand_position_2,    
+            stand_position_3,
+            liftoff_position
+
         ]) + lf_ee_offset
 
         rb_ee_offset = np.array([-0.11, -0.09, 0])
@@ -86,6 +99,12 @@ class InverseKinematics(Node):
             ################################################################################################
             # TODO 7: Implement the trotting gait
             ################################################################################################
+            mid_swing_position,
+            touch_down_position,  
+            stand_position_1,
+            stand_position_2,    
+            stand_position_3,
+            liftoff_position
         ]) + rb_ee_offset
 
         lb_ee_offset = np.array([-0.11, 0.09, 0])
@@ -93,6 +112,12 @@ class InverseKinematics(Node):
             ################################################################################################
             # TODO 7: Implement the trotting gait
             ################################################################################################
+            stand_position_2,    
+            stand_position_3,
+            liftoff_position,
+            mid_swing_position,
+            touch_down_position,  
+            stand_position_1
         ]) + lb_ee_offset
 
         self.ee_triangle_positions = [rf_ee_triangle_positions, lf_ee_triangle_positions, rb_ee_triangle_positions, lb_ee_triangle_positions]
@@ -124,6 +149,7 @@ class InverseKinematics(Node):
         ]
         self.joint_positions = np.array([msg.position[msg.name.index(joint)] for joint in joints_of_interest])
         self.joint_velocities = np.array([msg.velocity[msg.name.index(joint)] for joint in joints_of_interest])
+      
 
     def interpolate_triangle(self, t, leg_index):
         ################################################################################################
@@ -132,7 +158,23 @@ class InverseKinematics(Node):
         # six keyframes instead of three.
         ################################################################################################
 
-        return
+        t_mod = t % 1
+        leg_pos = self.ee_triangle_positions[leg_index]
+        def tri_helper(t_step, idx):
+            if idx == 5:
+                return (leg_pos[0] - leg_pos[5]) * (t_mod- t_step)  + leg_pos[5]
+            return (leg_pos[idx+1] - leg_pos[idx]) * (t_mod- t_step)  + leg_pos[idx]
+        steps = None  
+        if(leg_index == 0 or leg_index == 3) :
+            steps = [0, 1/12, 2/12, 2/12 + 1/3, 2/12 + 2/3, 11/12, 1]
+        else:
+            steps = [0, 1/3, 1/3 + 1/12, 1/3 + 2/12, 1/3 + 3/12, 2/3, 1]
+        for i in range(0,6):
+            print(f"{t_mod}  {i} {steps[i+1]}")
+            
+            if (t_mod <= steps[i+1]):
+                return tri_helper(steps[i], i)
+            
 
     def cache_target_joint_positions(self):
         # Calculate and store the target joint positions for a cycle and all 4 legs
