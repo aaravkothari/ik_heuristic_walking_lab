@@ -160,10 +160,12 @@ class InverseKinematics(Node):
 
         t_mod = t % 1
         leg_pos = self.ee_triangle_positions[leg_index]
-        def tri_helper(t_step, idx):
+        def tri_helper(t_step,t_step_next,idx):
+            
             if idx == 5:
-                return (leg_pos[0] - leg_pos[5]) * (t_mod- t_step)  + leg_pos[5]
-            return (leg_pos[idx+1] - leg_pos[idx]) * (t_mod- t_step)  + leg_pos[idx]
+                return (leg_pos[0] - leg_pos[5]) * ((t_mod- t_step)/(t_step_next - t_step))  + leg_pos[5]
+            return (leg_pos[idx+1] - leg_pos[idx]) * ((t_mod- t_step)/(t_step_next - t_step))  + leg_pos[idx]
+            
         steps = None  
         if(leg_index == 0 or leg_index == 3) :
             steps = [0, 1/12, 2/12, 2/12 + 1/3, 2/12 + 2/3, 11/12, 1]
@@ -173,7 +175,7 @@ class InverseKinematics(Node):
             print(f"{t_mod}  {i} {steps[i+1]}")
             
             if (t_mod <= steps[i+1]):
-                return tri_helper(steps[i], i)
+                return tri_helper(steps[i],steps[i+1], i)
             
 
     def cache_target_joint_positions(self):
